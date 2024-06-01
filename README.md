@@ -1,8 +1,11 @@
 # Py_DataAnal_LessonDesign
+
 python科学计算课程设计
+
 课程设计名称
 
 使用scikit-learn构建和评价xx模型
+
 课程设计内容
 
 wine数据集和wine_quality数据集是两份和葡萄酒有关的数据集。
