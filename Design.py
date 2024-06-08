@@ -14,8 +14,8 @@ wine = pd.read_csv("wine.csv")
 wine_quality = pd.read_csv("wine_quality.csv", sep=';')
 
 # 将数据集的数据和标签拆分开
-wine = wine.iloc[:, 1:]
 wine_labels = wine.iloc[:, 0]
+wine = wine.iloc[:, 1:]
 wine_data = wine.values
 wine_quality = wine_quality.iloc[:, :-1]
 wine_quality_labels = wine_quality.iloc[:, -1]
@@ -83,10 +83,10 @@ wine_quality_testPCA = pca.transform(wine_quality_test_standardized)
 # print(wine_quality_testPCA)
 
 # KMeans算法
-for i in range(2, 15):
-    kmeans = KMeans(n_clusters=i, random_state=32).fit(wine_trainPCA)
-    score = fowlkes_mallows_score(wine_labels_train, kmeans.labels_)
-    print('数据聚%d类FMI评价分值为：%f' % (i, score))
+# for i in range(2, 15):
+#     kmeans = KMeans(n_clusters=i, random_state=32).fit(wine_trainPCA)
+#     score = fowlkes_mallows_score(wine_labels_train, kmeans.labels_)
+#     print('数据聚%d类FMI评价分值为：%f' % (i, score))
 
 # kmeans = KMeans(n_clusters=3, random_state=123).fit(wine_testPCA)
 # print(":\n", kmeans, kmeans.labels_)
@@ -113,10 +113,10 @@ for i in range(2, 15):
 # plt.show()
 
 # DBSCAN算法
-# for i in range(500, 600, 1):
-#     dbscan = DBSCAN(eps=i*0.001, min_samples=4).fit(wine_trainPCA)
-#     score = fowlkes_mallows_score(wine_labels_train, dbscan.labels_)
-#     print('数据聚%d类FMI评价分值为：%f' % (i, score))
+for i in range(500, 600, 1):
+    dbscan = DBSCAN(eps=i*0.001, min_samples=4).fit(wine_trainPCA)
+    score = fowlkes_mallows_score(wine_labels_train, dbscan.labels_)
+    print('数据聚%d类FMI评价分值为：%f' % (i, score))
 
 dbscan = DBSCAN(eps=0.547, min_samples=4).fit(wine_trainPCA)
 print(":\n", dbscan, dbscan.labels_)
