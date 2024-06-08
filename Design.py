@@ -5,7 +5,7 @@ from sklearn.decomposition import PCA
 from sklearn.cluster import KMeans
 from sklearn.cluster import DBSCAN
 from sklearn.manifold import TSNE
-from sklearn.metrics import fowlkes_mallows_score
+from sklearn.metrics import fowlkes_mallows_score, calinski_harabasz_score, silhouette_score
 import matplotlib.pyplot as plt
 import pandas as pd
 
@@ -113,12 +113,25 @@ wine_quality_testPCA = pca.transform(wine_quality_test_standardized)
 # plt.show()
 
 # DBSCAN算法
+# FMI评价模型
 for i in range(500, 600, 1):
     dbscan = DBSCAN(eps=i*0.001, min_samples=4).fit(wine_trainPCA)
     score = fowlkes_mallows_score(wine_labels_train, dbscan.labels_)
-    print('数据聚%d类FMI评价分值为：%f' % (i, score))
+    print('eps为%.3f类FMI评价分值为：%f' % (i*0.001, score))
 
-dbscan = DBSCAN(eps=0.547, min_samples=4).fit(wine_trainPCA)
+# Calinski-Harabasz评价模型
+calinski_harabasz_scores = []
+for i in range(500, 600, 1):
+    dbscan = DBSCAN(eps=i*0.001, min_samples=4).fit(wine_trainPCA)
+    score = calinski_harabasz_score(wine_trainPCA, dbscan.labels_)
+    calinski_harabasz_scores.append(score)
+    print("eps为%.3f时的Calinski-Harabasz指数为：%f" % (i*0.001, score))
+
+# 输出最优的簇数
+best_k = calinski_harabasz_scores.index(max(calinski_harabasz_scores)) + 500
+print("Calinski-Harabasz评价最优的簇数为：%d" % best_k)
+
+dbscan = DBSCAN(eps=0.571, min_samples=4).fit(wine_trainPCA)
 print(":\n", dbscan, dbscan.labels_)
 df4 = pd.DataFrame(wine_trainPCA)
 
@@ -131,7 +144,7 @@ for label, col in zip(unique_labels, colors):
         col = 'k'  # 黑色
     class_member_mask = (dbscan.labels_ == label)
     xy = df4[class_member_mask]
-    plt.scatter(xy.iloc[:, 0], xy.iloc[:, 1], c=col, label=f'Cluster {label}', alpha=0.5)
+    plt.scatter(xy.iloc[:, 0], xy.iloc[:, 1], c=col, label=f'Cluster {label+1}', alpha=0.5)
 
 plt.legend()
 plt.title('DBSCAN Clustering')
