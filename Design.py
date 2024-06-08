@@ -129,7 +129,7 @@ for i in range(500, 600, 1):
 
 # 输出最优的簇数
 best_k = calinski_harabasz_scores.index(max(calinski_harabasz_scores)) + 500
-print("Calinski-Harabasz评价最优的簇数为：%d" % best_k)
+print("Calinski-Harabasz评价最优的eps为：0.%d" % best_k)
 
 dbscan = DBSCAN(eps=0.571, min_samples=4).fit(wine_trainPCA)
 print(":\n", dbscan, dbscan.labels_)
