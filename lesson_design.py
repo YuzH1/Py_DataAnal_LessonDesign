@@ -28,8 +28,9 @@ from sklearn.cluster import KMeans
 from sklearn.cluster import AgglomerativeClustering
 from sklearn.metrics import calinski_harabasz_score
 from sklearn.metrics import silhouette_score
-import matplotlib.pyplot as plt
+from sklearn.metrics import fowlkes_mallows_score
 
+import matplotlib.pyplot as plt
 import pandas as pd
 
 
@@ -39,10 +40,11 @@ import pandas as pd
 # 读取数据集
 wine = pd.read_csv("wine.csv")
 wine_quality = pd.read_csv("wine_quality.csv", sep=';')
-
+#输出wine数据名称
+print(wine.columns)
 # 将数据集的数据和标签拆分开
+wine_labels = wine['Class']
 wine = wine.iloc[:, 1:]
-wine_labels = wine.iloc[:, 0]
 wine_data = wine.values
 wine_quality = wine_quality.iloc[:, :-1]
 wine_quality_labels = wine_quality.iloc[:, -1]
@@ -51,8 +53,8 @@ wine_quality_data = wine_quality.values
 # print(wine_data)
 # print("\nwine_quality数据集的数据：")
 # print(wine_quality_data)
-# print("\nwine数据集的标签")
-# print(wine_labels)
+print("\nwine数据集的标签")
+print(wine_labels)
 # print("\nwine_quality数据集的标签")
 # print(wine_quality_labels)
 
@@ -65,6 +67,7 @@ wine_quality_data_train, wine_quality_data_test, wine_quality_labels_train, wine
 # print(wine_data_train)
 # print("\nwine_quality数据集的训练集：")
 # print(wine_quality_data_train)
+print("wine_labels_train:", wine_labels_train) 
 
 # 标准化数据集 对wine数据集采用均值标准化
 wine_data_train_df = pd.DataFrame(wine_data_train)
@@ -73,10 +76,10 @@ wine_train_standardized = scaler.fit_transform(wine_data_train_df)
 wine_data_test_df = pd.DataFrame(wine_data_test)
 scaler = StandardScaler()
 wine_test_standardized = scaler.fit_transform(wine_data_test_df)
-print("\nwine数据训练集的均值标准化结果：")
-print(wine_train_standardized)
-print("\nwine数据测试集的均值标准化结果：")
-print(wine_test_standardized)
+# print("\nwine数据训练集的均值标准化结果：")
+# print(wine_train_standardized)
+# print("\nwine数据测试集的均值标准化结果：")
+# print(wine_test_standardized)
 
 # 标准化数据集 对wine_quality数据集采用均值标准化
 wine_quality_data_test_df = pd.DataFrame(wine_quality_data_test)
@@ -85,28 +88,28 @@ wine_quality_test_standardized = scaler.fit_transform(wine_quality_data_test_df)
 wine_quality_data_train_df = pd.DataFrame(wine_quality_data_train)
 scaler = StandardScaler()
 wine_quality_train_standardized = scaler.fit_transform(wine_quality_data_train_df)
-print("\nwine_quality数据训练集的均值标准化结果：")
-print(wine_quality_train_standardized)
-print("\nwine_quality数据测试集的均值标准化结果：")
-print(wine_quality_test_standardized)
+# print("\nwine_quality数据训练集的均值标准化结果：")
+# print(wine_quality_train_standardized)
+# print("\nwine_quality数据测试集的均值标准化结果：")
+# print(wine_quality_test_standardized)
 
 # PCA降维 n_components表示保留前五个方差最大的特征向量
 # 对wine数据集进行PCA降维
 pca = PCA(n_components=5).fit(wine_train_standardized)
 wine_trainPCA = pca.transform(wine_train_standardized)
 wine_testPCA = pca.transform(wine_test_standardized)
-print("\nwine数据训练集的PCA降维结果：")
-print(wine_trainPCA)
-print("\nwine数据测试集的PCA降维结果：")
-print(wine_testPCA)
+# print("\nwine数据训练集的PCA降维结果：")
+# print(wine_trainPCA)
+# print("\nwine数据测试集的PCA降维结果：")
+# print(wine_testPCA)
 # 对wine_quality数据集进行PCA降维
 pca = PCA(n_components=5).fit(wine_quality_train_standardized)
 wine_quality_trainPCA = pca.transform(wine_quality_train_standardized)
 wine_quality_testPCA = pca.transform(wine_quality_test_standardized)
-print("\nwine_quality数据训练集的PCA降维结果：")
-print(wine_quality_trainPCA)
-print("\nwine_quality数据测试集的PCA降维结果：")
-print(wine_quality_testPCA)
+# print("\nwine_quality数据训练集的PCA降维结果：")
+# print(wine_quality_trainPCA)
+# print("\nwine_quality数据测试集的PCA降维结果：")
+# print(wine_quality_testPCA)
 
 # ……………………END…………………… #
 
@@ -125,6 +128,13 @@ plt.scatter(kmeans.cluster_centers_[:, 0], kmeans.cluster_centers_[:, 1], s=300,
 
 plt.show()
 
+#FMI评价模型
+score = fowlkes_mallows_score(wine_labels_train, kmeans.labels_)
+print("数据集的FMI指数为：%f" % score)
+for i in range(2,11):
+    kmeans = KMeans(n_clusters=i, random_state=1, n_init=10).fit(wine_trainPCA)
+    score = fowlkes_mallows_score(wine_labels_train, kmeans.labels_)
+    print("簇数为%d时的FMI指数为：%f" % (i, score))
 
 # Calinski-Harabasz评价模型
 calinski_harabasz_scores = []
