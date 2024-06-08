@@ -4,13 +4,12 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.decomposition import PCA
 from sklearn.cluster import KMeans
 from sklearn.cluster import DBSCAN
-from sklearn.manifold import TSNE
 from sklearn.metrics import fowlkes_mallows_score, calinski_harabasz_score, silhouette_score
 import matplotlib.pyplot as plt
 import pandas as pd
 import matplotlib
-
 matplotlib.rcParams['axes.unicode_minus'] = False
+
 # 读取数据集
 wine = pd.read_csv("wine.csv")
 wine_quality = pd.read_csv("wine_quality.csv", sep=';')
@@ -84,6 +83,21 @@ wine_quality_testPCA = pca.transform(wine_quality_test_standardized)
 # print("\nwine_quality数据测试集的PCA降维结果：")
 # print(wine_quality_testPCA)
 
+# ##############非必要参考数据######################
+# 查看每个主成分解释的方差比例
+# pca = PCA()
+# transformed_data = pca.fit_transform(wine_train_standardized)
+# variances = pca.explained_variance_ratio_
+# print("每个主成分解释的方差比例: ", variances)
+# wine_quality_trainPCA = wine_quality_trainPCA.round(2)
+# wine_trainPCA = wine_trainPCA.round(2)
+# print("格式化数据后(保留两位小数)")
+# print("wine_trainPCA")
+# print(wine_trainPCA)
+# print("wine_quality_trainPCA")
+# print(wine_quality_trainPCA)  # 格式化数据
+# ##############非必要参考数据######################
+
 # K-means聚类分析
 kmeans = KMeans(n_clusters=3, random_state=1, n_init=10).fit(wine_trainPCA)
 print("\nKMeans聚类结果：")
@@ -94,7 +108,6 @@ plt.figure(figsize=(8, 6))
 plt.rcParams['font.sans-serif'] = ['SimHei']
 plt.scatter(wine_trainPCA[:, 0], wine_trainPCA[:, 1], c=kmeans.labels_, cmap='viridis')
 plt.scatter(kmeans.cluster_centers_[:, 0], kmeans.cluster_centers_[:, 1], s=300, c='black', marker='x')
-
 plt.show()
 
 # Calinski-Harabasz评价模型
@@ -142,15 +155,12 @@ for i in range(500, 600, 1):
 # 输出最优的簇数
 best_k = calinski_harabasz_scores.index(max(calinski_harabasz_scores)) + 500
 print("Calinski-Harabasz评价最优的eps为：0.%d" % best_k)
-
 dbscan = DBSCAN(eps=0.571, min_samples=4).fit(wine_trainPCA)
 print("dbscan:")
 print(dbscan)
 print("dbscan.labels_:")
 print(dbscan.labels_)
-dbscan.labels_ += 1
 
-print(dbscan.labels_)
 df4 = pd.DataFrame(wine_trainPCA)
 plt.figure(figsize=(9, 6))
 unique_labels = set(dbscan.labels_)  # 获取所有唯一的标签
@@ -166,34 +176,3 @@ for label, col in zip(unique_labels, colors):
 plt.legend()
 plt.title('DBSCAN Clustering')
 plt.show()
-
-from sklearn.linear_model import LinearRegression
-from sklearn.metrics import explained_variance_score, \
-    mean_absolute_error, mean_squared_error, median_absolute_error, r2_score
-
-print('K-means模型评价结果：')
-print('wine数据K-means模型的平均绝对误差为：',
-      mean_absolute_error(wine_labels_train, kmeans.labels_))
-print('wine数据K-means模型的均方误差为：',
-      mean_squared_error(wine_labels_train, kmeans.labels_))
-print('wine数据K-means模型的中值绝对误差为：',
-      median_absolute_error(wine_labels_train, kmeans.labels_))
-print('wine数据K-means模型的可解释方差值为：',
-      explained_variance_score(wine_labels_train, kmeans.labels_))
-print('wine数据K-means模型的R方值为：',
-      r2_score(wine_labels_train, kmeans.labels_))
-
-print('DBSCAN模型评价结果：')
-from sklearn.metrics import explained_variance_score, \
-    mean_absolute_error, mean_squared_error, median_absolute_error, r2_score
-
-print('wine数据DBSCAN树模型的平均绝对误差为：',
-      mean_absolute_error(wine_labels_train, dbscan.labels_))
-print('wine数据DBSCAN树模型的均方误差为：',
-      mean_squared_error(wine_labels_train, dbscan.labels_))
-print('wine数据DBSCAN树模型的中值绝对误差为：',
-      median_absolute_error(wine_labels_train, dbscan.labels_))
-print('wine数据DBSCAN树模型的可解释方差值为：',
-      explained_variance_score(wine_labels_train, dbscan.labels_))
-print('wine数据DBSCAN树模型的R方值为：',
-      r2_score(wine_labels_train, dbscan.labels_))
