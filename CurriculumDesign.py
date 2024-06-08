@@ -1,3 +1,4 @@
+import numpy as np
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 from sklearn.decomposition import PCA
@@ -33,39 +34,51 @@ print(wine_data_train)
 print("\nwine_quality数据集的训练集：")
 print(wine_quality_data_train)
 
-# 标准化数据集 对wine数据集采用均值标准化
+# 标准化数据集 对wine数据集采用标准差标准化
 wine_data_train_df = pd.DataFrame(wine_data_train)
 scaler = StandardScaler()
 wine_train_standardized = scaler.fit_transform(wine_data_train_df)
 wine_data_test_df = pd.DataFrame(wine_data_test)
 scaler = StandardScaler()
 wine_test_standardized = scaler.fit_transform(wine_data_test_df)
-print("\nwine数据训练集的均值标准化结果：")
+print("\nwine数据训练集的标准差标准化结果：")
 print(wine_train_standardized)
-print("\nwine数据测试集的均值标准化结果：")
+print("\nwine数据测试集的标准差标准化结果：")
 print(wine_test_standardized)
 
-# 标准化数据集 对wine_quality数据集采用均值标准化
+# 标准化数据集 对wine_quality数据集采用标准差标准化
 wine_quality_data_test_df = pd.DataFrame(wine_quality_data_test)
 scaler = StandardScaler()
 wine_quality_test_standardized = scaler.fit_transform(wine_quality_data_test_df)
 wine_quality_data_train_df = pd.DataFrame(wine_quality_data_train)
 scaler = StandardScaler()
 wine_quality_train_standardized = scaler.fit_transform(wine_quality_data_train_df)
-print("\nwine_quality数据训练集的均值标准化结果：")
+print("\nwine_quality数据训练集的标准差标准化结果：")
 print(wine_quality_train_standardized)
-print("\nwine_quality数据测试集的均值标准化结果：")
+print("\nwine_quality数据测试集的标准差标准化结果：")
 print(wine_quality_test_standardized)
 
+####################################################
+# 查看每个主成分解释的方差比例
+pca = PCA()
+transformed_data = pca.fit_transform(wine_train_standardized)
+variances = pca.explained_variance_ratio_
+print("每个主成分解释的方差比例: ", variances)
+######################################################
+
 # PCA降维 n_components表示保留前五个方差最大的特征向量
-# 对wine数据集进行PCA降维
+# 对wine数据集进行PCA降维  ！！前五个特征变量！！
 pca = PCA(n_components=5).fit(wine_train_standardized)
 wine_trainPCA = pca.transform(wine_train_standardized)
 wine_testPCA = pca.transform(wine_test_standardized)
 print("\nwine数据训练集的PCA降维结果：")
 print(wine_trainPCA)
+er = pca.explained_variance_ratio_
+print("\nwine数据训练集的PCA降维后各特征方差贡献率：")
+print(er)
 print("\nwine数据测试集的PCA降维结果：")
 print(wine_testPCA)
+
 # 对wine_quality数据集进行PCA降维
 pca = PCA(n_components=5).fit(wine_quality_train_standardized)
 wine_quality_trainPCA = pca.transform(wine_quality_train_standardized)
@@ -74,3 +87,13 @@ print("\nwine_quality数据训练集的PCA降维结果：")
 print(wine_quality_trainPCA)
 print("\nwine_quality数据测试集的PCA降维结果：")
 print(wine_quality_testPCA)
+
+# ##############非必要参考数据######################
+# wine_quality_trainPCA = wine_quality_trainPCA.round(2)
+# wine_trainPCA = wine_trainPCA.round(2)
+# print("格式化数据后(保留两位小数)")
+# print("wine_trainPCA")
+# print(wine_trainPCA)
+# print("wine_quality_trainPCA")
+# print(wine_quality_trainPCA)  # 格式化数据
+# ##############非必要参考数据######################
