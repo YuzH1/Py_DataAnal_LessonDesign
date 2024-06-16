@@ -135,7 +135,7 @@ for i in range(500, 600, 1):
     calinski_harabasz_scores.append(score)
     print("eps为%.3f时的Calinski-Harabasz指数为：%f" % (i * 0.001, score))
 
-# 输出最优的簇数
+# 输出最优的eps
 best_k = calinski_harabasz_scores.index(max(calinski_harabasz_scores)) + 500
 print("Calinski-Harabasz评价最优的eps为：0.%d" % best_k)
 
