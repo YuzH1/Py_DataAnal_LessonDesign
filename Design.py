@@ -126,19 +126,6 @@ plt.ylabel("轮廓系数")
 plt.show()
 
 # DBSCAN算法
-
-# Calinski-Harabasz评价模型
-calinski_harabasz_scores = []
-for i in range(500, 600, 1):
-    dbscan = DBSCAN(eps=i * 0.001, min_samples=4).fit(wine_trainPCA)
-    score = calinski_harabasz_score(wine_trainPCA, dbscan.labels_)
-    calinski_harabasz_scores.append(score)
-    print("eps为%.3f时的Calinski-Harabasz指数为：%f" % (i * 0.001, score))
-
-# 输出最优的eps
-best_k = calinski_harabasz_scores.index(max(calinski_harabasz_scores)) + 500
-print("Calinski-Harabasz评价最优的eps为：0.%d" % best_k)
-
 dbscan = DBSCAN(eps=0.571, min_samples=4).fit(wine_trainPCA)
 print("dbscan:")
 print(dbscan)
@@ -164,6 +151,18 @@ for label, col in zip(unique_labels, colors):
 plt.legend()
 plt.title('DBSCAN Clustering')
 plt.show()
+
+# Calinski-Harabasz评价模型
+calinski_harabasz_scores = []
+for i in range(500, 600, 1):
+    dbscan = DBSCAN(eps=i * 0.001, min_samples=4).fit(wine_trainPCA)
+    score = calinski_harabasz_score(wine_trainPCA, dbscan.labels_)
+    calinski_harabasz_scores.append(score)
+    print("eps为%.3f时的Calinski-Harabasz指数为：%f" % (i * 0.001, score))
+
+# 输出最优的eps
+best_k = calinski_harabasz_scores.index(max(calinski_harabasz_scores)) + 500
+print("Calinski-Harabasz评价最优的eps为：0.%d" % best_k)
 
 # FMI评价模型
 for i in range(500, 600, 1):
